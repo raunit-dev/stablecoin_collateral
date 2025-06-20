@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{token_2022::Token2022, token_interface::Mint};
+
+use crate::Config;
+use crate::SEED_CONFIG_ACCOUNT;
 
 #[derive(Accounts)]
 pub struct UpdateConfig<'info> {
@@ -7,12 +9,12 @@ pub struct UpdateConfig<'info> {
     pub authority: Signer<'info>,
 
     #[account(
-        mut,
-        seeds = config_account.bump,
-        has_one = authoirty,
-        bump,
+        mut,    
+        seeds = [SEED_CONFIG_ACCOUNT],
+        bump = config_account.bump,
+        has_one = authority,
     )]
-    pub config_account: Account<'info, Config>,
+    pub config_account: Account<'info, Config>
 
 }
 

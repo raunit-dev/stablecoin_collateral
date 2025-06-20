@@ -1,4 +1,13 @@
+pub mod constants;
+pub mod error;
+pub mod instructions;
+pub mod state;
+
 use anchor_lang::prelude::*;
+
+pub use constants::*;
+pub use instructions::*;
+pub use state::*;
 
 declare_id!("ATmAsiEA1Kw9AL2eraMCdyNy3BnuMDEeFGVgBbWaLG6s");
 
@@ -6,11 +15,15 @@ declare_id!("ATmAsiEA1Kw9AL2eraMCdyNy3BnuMDEeFGVgBbWaLG6s");
 pub mod stablecoin {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
-        Ok(())
+   pub fn initialize_config(ctx: Context<InitializeConfig>) -> Result<()> {
+       ctx.accounts.initialize_config(ctx.bumps)
+   }
+
+   pub fn update_config(ctx: Context<UpdateConfig>,min_health_factor: u64) -> Result<()> {
+       ctx.accounts.update_config(min_health_factor)
+   }
+
+   pub fn deposit_collateral_and_mint_tokens(ctx: Context<DepositCollateralAndMintTokens>, amount_collateral: u64, amount_to_mint: u64) -> Result<()> {
+        ctx.accounts.deposit_collateral_and_mint_tokens(amount_collateral, amount_to_mint, ctx.bumps)
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}

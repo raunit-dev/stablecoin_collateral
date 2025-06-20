@@ -24,7 +24,6 @@ pub struct InitializeConfig<'info> {
         init,
         payer = authority,
         seeds = [SEED_MINT_ACCOUNT],
-        space = 8 + Config::INIT_SPACE,
         bump,
         mint::decimals = MINT_DECIMALS,
         mint::authority = mint_account,
@@ -39,7 +38,7 @@ pub struct InitializeConfig<'info> {
 }
 
 impl<'info> InitializeConfig<'info> {
-    pub fn initialize_config(&mut self, bump: InitializeConfig) -> Result<()> {
+    pub fn initialize_config(&mut self, bump: InitializeConfigBumps) -> Result<()> {
         self.config_account.set_inner(Config {
             authority: self.authority.key(),
             mint_account: self.mint_account.key(),
