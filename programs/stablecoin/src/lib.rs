@@ -1,3 +1,4 @@
+#![allow(unexpected_cfgs)]
 pub mod constants;
 pub mod error;
 pub mod instructions;
@@ -25,5 +26,13 @@ pub mod stablecoin {
 
    pub fn deposit_collateral_and_mint_tokens(ctx: Context<DepositCollateralAndMintTokens>, amount_collateral: u64, amount_to_mint: u64) -> Result<()> {
         ctx.accounts.deposit_collateral_and_mint_tokens(amount_collateral, amount_to_mint, ctx.bumps)
+    }
+
+    pub fn redeem_collateral_and_burn_tokens(ctx: Context<RedeemCollateralAndBurnTokens>, amount_collateral: u64, amount_to_burn: u64) -> Result<()> {
+        ctx.accounts.redeem_collateral_and_burn_tokens(amount_collateral, amount_to_burn)
+    }
+
+    pub fn liquidate(ctx: Context<Liquidate>, amount_to_burn: u64) -> Result<()> {
+        ctx.accounts.liquidate(amount_to_burn)
     }
 }

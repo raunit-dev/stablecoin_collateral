@@ -20,7 +20,7 @@ pub fn calculate_health_factor (
     config: &Account<Config>,
     price_feed: &Account<PriceUpdateV2>
 ) -> Result<u64> {
-    let collateral_value_in_usd = get_usd_value(&collateral.lamports_balance, price_feed)?;
+    let collateral_value_in_usd = get_usd_value(&collateral.lamport_balance, price_feed)?;
 
     let collateral_adjusted_for_liquidation_threshold = (collateral_value_in_usd * config.liquidation_threshold) / 100;
 

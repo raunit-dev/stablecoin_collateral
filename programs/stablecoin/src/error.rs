@@ -11,4 +11,7 @@ pub enum ErrorCode {
     #[msg("Cannot liquidate a Healthy Account")]
     AboveMinHealthFactor,
 
+     #[msg("Math Overflow")]
+    MathOverflow
+
 }
