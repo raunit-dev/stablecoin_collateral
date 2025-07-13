@@ -11,5 +11,5 @@ pub const PRICE_FEED_DECIMAL_ADJUSTMENT: u128 = 10;
 pub const MAXIMUM_AGE: u64 = 100;
 pub const MINT_DECIMALS: u8 = 9;
 pub const LIQUIDATION_THRESHOLD: u64 = 50; // 200% over collateralised
-pub const LIQUIDATION_BONUS: u64 = 10; 
-pub const MIN_HEALTH_FACTOR: u64 = 1;
+pub const LIQUIDATION_BONUS: u64 = 10; //you will be getting 10 for liquiditing an account
+pub const MIN_HEALTH_FACTOR: u64 = 1;//anytime your health factor falls below 1 your account will be liquidated

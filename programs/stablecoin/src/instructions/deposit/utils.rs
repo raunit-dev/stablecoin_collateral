@@ -12,6 +12,16 @@ pub fn mint_token <'info> (
 
     let signer_seeds: &[&[&[u8]]] = &[&[SEED_MINT_ACCOUNT, &[bump]]];
 
+    // let cpi_program = token_program.to_account_info();
+    // let mint_accounts = MintTo {
+    //     mint: mint_account.to_account_info(),
+    //     to: token_account.to_account_info(),
+    //     authority: mint_account.to_account_info()
+    // };
+
+    // let cpi_ctx = CpiContext::new_with_signer(cpi_program, mint_accounts, signer_seeds);
+    // mint_to(cpi_ctx, amount)
+
     mint_to(
         CpiContext::new_with_signer(
             token_program.to_account_info(),
@@ -33,6 +43,14 @@ pub fn deposit_sol <'info> (
     system_program: &Program<'info, System>,
     amount: u64
 ) -> Result<()> {
+
+    // let cpi_program = system_program.to_account_info();
+    // let transfer_accounts = Transfer {
+    //     from: from.to_account_info(),
+    //     to: to.to_account_info()
+    // };
+    // let cpi_ctx = CpiContext::new(cpi_program, transfer_accounts);
+    // transfer(cpi_ctx,amount);
 
     transfer(
         CpiContext::new(

@@ -6,7 +6,10 @@ use anchor_spl::{
 
 use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 
-use crate::{check_health_factor, deposit_sol, mint_token, Collateral, Config, SEED_COLLATERAL_ACCOUNT, SEED_CONFIG_ACCOUNT, SEED_SOL_ACCOUNT};
+use crate::{
+    check_health_factor, deposit_sol, mint_token, Collateral, Config, SEED_COLLATERAL_ACCOUNT,
+    SEED_CONFIG_ACCOUNT, SEED_SOL_ACCOUNT,
+};
 
 #[derive(Accounts)]
 pub struct DepositCollateralAndMintTokens<'info> {
@@ -24,7 +27,7 @@ pub struct DepositCollateralAndMintTokens<'info> {
     pub mint_account: InterfaceAccount<'info, Mint>,
 
     #[account(
-        init_if_needed,//if you want better security than go for "init"
+        init_if_needed,
         payer = depositor,
         space = 8 + Collateral::INIT_SPACE,
         seeds = [SEED_COLLATERAL_ACCOUNT, depositor.key().as_ref()],
@@ -47,11 +50,11 @@ pub struct DepositCollateralAndMintTokens<'info> {
         associated_token::token_program = token_program,
     )]
     pub token_account: InterfaceAccount<'info, TokenAccount>,
-     pub token_program: Program<'info, Token2022>,
+
+    pub token_program: Program<'info, Token2022>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
     pub price_update: Account<'info, PriceUpdateV2>,
-
 }
 
 impl<'info> DepositCollateralAndMintTokens<'info> {
@@ -59,20 +62,19 @@ impl<'info> DepositCollateralAndMintTokens<'info> {
         &mut self,
         amount_collateral: u64,
         amount_to_mint: u64,
-        bump: DepositCollateralAndMintTokensBumps
+        bump: DepositCollateralAndMintTokensBumps,
     ) -> Result<()> {
-
         if !self.collateral_account.is_initialized {
-          self.collateral_account.set_inner(Collateral {
-            depositor: self.depositor.key(),
-            sol_account: self.sol_account.key(),
-            token_account: self.token_account.key(),
-            lamport_balance: self.sol_account.lamports() + amount_collateral,
-            amount_minted: self.collateral_account.amount_minted + amount_to_mint,
-            is_initialized: true,
-            bump: bump.collateral_account,
-            bump_sol_account: bump.sol_account,
-          });
+            self.collateral_account.set_inner(Collateral {
+                depositor: self.depositor.key(),
+                sol_account: self.sol_account.key(),
+                token_account: self.token_account.key(),
+                lamport_balance: self.sol_account.lamports() + amount_collateral,
+                amount_minted: self.collateral_account.amount_minted + amount_to_mint,
+                is_initialized: true,
+                bump: bump.collateral_account,
+                bump_sol_account: bump.sol_account,
+            });
         } else {
             self.collateral_account.lamport_balance = self
                 .sol_account
@@ -89,33 +91,31 @@ impl<'info> DepositCollateralAndMintTokens<'info> {
         check_health_factor(
             &self.collateral_account,
             &self.config_account,
-            &self.price_update
+            &self.price_update,
         )?;
-
 
         deposit_sol(
             &self.depositor,
             &self.sol_account,
             &self.system_program,
-            amount_collateral
+            amount_collateral,
         )?;
 
-         mint_token(
+        mint_token(
             &self.mint_account,
             &self.token_account,
             &self.token_program,
             amount_to_mint,
-            self.config_account.bump_mint_account
+            self.config_account.bump_mint_account,
         )?;
 
         Ok(())
     }
 }
 
-
 #[error_code]
 
 pub enum ErrorCode {
     #[msg("Math Overflow")]
-    MathOverflow
+    MathOverflow,
 }

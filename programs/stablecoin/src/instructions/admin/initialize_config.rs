@@ -2,9 +2,11 @@ use anchor_lang::prelude::*;
 use anchor_spl::{token_2022::Token2022, token_interface::Mint};
 
 use crate::{
-    Config, LIQUIDATION_BONUS, LIQUIDATION_THRESHOLD, MINT_DECIMALS, MIN_HEALTH_FACTOR,
+    LIQUIDATION_BONUS, LIQUIDATION_THRESHOLD, MINT_DECIMALS, MIN_HEALTH_FACTOR,
     SEED_CONFIG_ACCOUNT, SEED_MINT_ACCOUNT,
 };
+
+use crate::Config;
 
 #[derive(Accounts)]
 pub struct InitializeConfig<'info> {

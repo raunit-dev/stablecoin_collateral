@@ -1,11 +1,17 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenAccount, Token2022}};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_interface::{Mint, Token2022, TokenAccount},
+};
 use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 
-use crate::{burn_tokens, calculate_health_factor, error::ErrorCode, get_lamports_from_usd, withdraw_sol, Collateral, Config, SEED_CONFIG_ACCOUNT };
+use crate::{
+    burn_tokens, check_health_factor, error::ErrorCode, get_lamports_from_usd, withdraw_sol,
+    Collateral, Config, SEED_CONFIG_ACCOUNT,
+};
 
 #[derive(Accounts)]
-pub struct Liquidate <'info> {
+pub struct Liquidate<'info> {
     #[account(mut)]
     pub liquidator: Signer<'info>,
 
@@ -43,12 +49,18 @@ pub struct Liquidate <'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl <'info> Liquidate <'info> {
-    pub fn liquidate (&mut self, amount_to_burn: u64) -> Result<()> {
+impl<'info> Liquidate<'info> {
+    pub fn liquidate(&mut self, amount_to_burn: u64) -> Result<()> {
+        let health_factor = check_health_factor(
+            &self.collateral_account,
+            &self.config_account,
+            &self.price_update,
+        )?;
 
-        let health_factor = calculate_health_factor(&self.collateral_account, &self.config_account, &self.price_update)?;
-
-        require!(health_factor <= self.config_account.min_health_factor, ErrorCode::AboveMinHealthFactor);
+        require!(
+            health_factor <= self.config_account.min_health_factor,
+            ErrorCode::AboveMinHealthFactor
+        );
 
         let lamports = get_lamports_from_usd(&amount_to_burn, &self.price_update)?;
         let liquidation_bonus = lamports * self.config_account.liquidation_bonus / 100;
@@ -67,7 +79,7 @@ impl <'info> Liquidate <'info> {
             &self.mint_account,
             &self.token_program,
             &self.liquidator,
-            amount_to_burn
+            amount_to_burn,
         )?;
 
         self.collateral_account.lamport_balance = self.sol_account.lamports();
@@ -77,8 +89,12 @@ impl <'info> Liquidate <'info> {
             .checked_sub(amount_to_burn)
             .ok_or(ErrorCode::MathOverflow)?;
 
-          calculate_health_factor(&self.collateral_account, &self.config_account, &self.price_update)?;
+        check_health_factor(
+            &self.collateral_account,
+            &self.config_account,
+            &self.price_update,
+        )?;
 
         Ok(())
-  }
+    }
 }

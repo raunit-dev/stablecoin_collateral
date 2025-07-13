@@ -47,7 +47,6 @@ impl<'info> RedeemCollateralAndBurnTokens<'info> {
         amount_collateral: u64,
         amount_to_burn: u64,
     ) -> Result<()> {
-
         check_health_factor(
             &self.collateral_account,
             &self.config_account,
@@ -69,7 +68,6 @@ impl<'info> RedeemCollateralAndBurnTokens<'info> {
             amount_collateral,
             self.collateral_account.bump_sol_account,
         )?;
-        
 
         Ok(())
     }
